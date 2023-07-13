@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify';
+import sleep from 'sleep-promise';
 
 type PaymentsQueuePayload =
 	| {
@@ -48,6 +49,9 @@ export default async function events(app: FastifyInstance) {
 							},
 						});
 
+						// We simulate a network delay
+						await sleep(3000);
+
 						app.queue.channel.sendToQueue(
 							app.config.EMAILS_QUEUE_NAME,
 							Buffer.from(
@@ -94,6 +98,9 @@ export default async function events(app: FastifyInstance) {
 								status: 'completed',
 							},
 						});
+
+						// We simulate a network delay
+						await sleep(3000);
 
 						app.queue.channel.sendToQueue(
 							app.config.ORDERS_QUEUE_NAME,
