@@ -1,0 +1,17 @@
+name: 'CI'
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run tests
+        run: docker compose up -f docker-compose.test.yml --exit-code-from payments-service --abort-on-container-exit
