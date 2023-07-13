@@ -53,5 +53,5 @@ $ npm run push
 $ npm run dev
 
 # running tests
-$ docker compose -f docker-compose.test.yml up --build --exit-code-from orders-service
+$ docker compose -f docker-compose.test.yml up --build --exit-code-from payments-service
 ```
