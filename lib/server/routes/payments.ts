@@ -63,21 +63,6 @@ export default async function paymentsRoutes(app: FastifyInstance) {
 				});
 
 				app.queue.channel.sendToQueue(
-					app.config.EMAILS_QUEUE_NAME,
-					Buffer.from(
-						JSON.stringify({
-							message: 'payment-created',
-							data: {
-								email,
-								amount,
-								type,
-								paymentId: createdPayment.id,
-							},
-						}),
-					),
-				);
-
-				app.queue.channel.sendToQueue(
 					app.config.PAYMENTS_QUEUE_NAME,
 					Buffer.from(
 						JSON.stringify({
