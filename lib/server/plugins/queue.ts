@@ -36,6 +36,18 @@ export default fp(async (app: FastifyInstance) => {
 		app.log.info('Connected to the queue.');
 	});
 
+	await channel.assertQueue(app.config.EMAILS_QUEUE_NAME, {
+		durable: false,
+	});
+
+	await channel.assertQueue(app.config.PAYMENTS_QUEUE_NAME, {
+		durable: false,
+	});
+
+	await channel.assertQueue(app.config.ORDERS_QUEUE_NAME, {
+		durable: false,
+	});
+
 	app.decorate('queue', { connection, channel });
 
 	app.addHook('onClose', async () => {
