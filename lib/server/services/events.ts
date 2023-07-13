@@ -16,6 +16,12 @@ type PaymentsQueuePayload =
 				paymentId: string;
 				status: 'created' | 'completed';
 			};
+	  }
+	| {
+			message: 'payments-email-sent';
+			data: {
+				paymentId: string;
+			};
 	  };
 
 export default async function events(app: FastifyInstance) {
@@ -34,7 +40,7 @@ export default async function events(app: FastifyInstance) {
 						where: { id: paymentId },
 					});
 
-					if (createdPayment && createdPayment.status === 'created') {
+					if (createdPayment) {
 						await app.db.payment.update({
 							where: { id: paymentId },
 							data: {
@@ -70,18 +76,18 @@ export default async function events(app: FastifyInstance) {
 							),
 						);
 
-						app.log.info(`Payment ${paymentId} completed.`);
+						app.log.info(`Payment ${paymentId} created.`);
 					}
 					break;
 				}
 				case 'payment-completed': {
-					const { paymentId, status } = data;
+					const { paymentId } = data;
 
 					const payment = await app.db.payment.findUnique({
 						where: { id: paymentId },
 					});
 
-					if (payment && status === 'completed') {
+					if (payment) {
 						await app.db.payment.update({
 							where: { id: paymentId },
 							data: {
@@ -103,6 +109,23 @@ export default async function events(app: FastifyInstance) {
 						);
 
 						app.log.info(`Payment ${paymentId} completed.`);
+					}
+					break;
+				}
+				case 'payments-email-sent': {
+					const { paymentId } = data;
+
+					const payment = await app.db.payment.findUnique({
+						where: { id: paymentId },
+					});
+
+					if (payment) {
+						await app.db.payment.update({
+							where: { id: paymentId },
+							data: {
+								status: 'completed',
+							},
+						});
 					}
 					break;
 				}
